@@ -1,83 +1,132 @@
 <!DOCTYPE html>
-<html>
 <head>
     <title>File Sharing App</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <style>
-        .divider:after,
-        .divider:before {
-            content: "";
-            flex: 1;
-            height: 1px;
-            background: #fff;
+        .background-radial-gradient {
+            background-color: hsl(218, 41%, 15%);
+            background-image: radial-gradient(650px circle at 0% 0%,
+            hsl(218, 41%, 35%) 15%,
+            hsl(218, 41%, 30%) 35%,
+            hsl(218, 41%, 20%) 75%,
+            hsl(218, 41%, 19%) 80%,
+            transparent 100%),
+            radial-gradient(1250px circle at 100% 100%,
+                hsl(218, 41%, 45%) 15%,
+                hsl(218, 41%, 30%) 35%,
+                hsl(218, 41%, 20%) 75%,
+                hsl(218, 41%, 19%) 80%,
+                transparent 100%);
         }
 
-        .h-custom {
-            height: calc(100% - 73px);
+        #radius-shape-1 {
+            height: 220px;
+            width: 220px;
+            top: -60px;
+            left: -130px;
+            background: radial-gradient(#44006b, #ad1fff);
+            overflow: hidden;
         }
 
-        @media (max-width: 450px) {
-            .h-custom {
-                height: 100%;
-            }
+        #radius-shape-2 {
+            border-radius: 38% 62% 63% 37% / 70% 33% 67% 30%;
+            bottom: -60px;
+            right: -110px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(#44006b, #ad1fff);
+            overflow: hidden;
+        }
+
+        .bg-glass {
+            background-color: hsla(0, 0%, 100%, 0.9) !important;
+            backdrop-filter: saturate(200%) blur(25px);
         }
     </style>
 </head>
-<body class="d-flex align-items-center" style="height: 100vh;">
-<div class="container mt-5">
-    <section class="vh-100">
-        <div class="container-fluid h-custom">
-            <div class="row d-flex justify-content-center align-items-center h-100">
-
-                <div class="col-lg-4">
-                    <img src="{{asset('images/main2.png')}}"
-                         class="img-fluid" alt="Sample image">
-                    <a href="{{route('file.upload')}}" class="btn btn-primary"
-                       style="padding-left: 2rem;padding-right: 2rem;background-color: #094D86;margin-left: 90px; color:#F2AA1F; font-weight:900;">
-                        <i class="fas fa-plus"></i>  Add file
-                    </a>
+<body>
+<div class="container" style="max-width: 2000px;">
+    <!-- Section: Design Block -->
+    <section class="background-radial-gradient overflow-hidden">
+        <div class="container px-4 py-5 px-md-5 text-center text-lg-start my-5">
+            <div class="row gx-lg-5 align-items-center mb-5">
+                <div class="col-lg-5 mb-5 mb-lg-0" style="z-index: 10">
+                    <h1 class="my-5 display-5 fw-bold ls-tight" style="color: hsl(218, 81%, 95%)">
+                        Share and Access Your Files<br/>
+                        <span style="color: hsl(218, 81%, 75%)">Anytime, Anywhere</span>
+                    </h1>
+                    <p class="mb-4 opacity-70" style="color: hsl(218, 81%, 85%)">
+                        Upload your files and access them securely from anywhere. Simple and easy file sharing platform
+                        for all your needs.
+                    </p>
+                    <div class="text-center text-lg-start mt-4 pt-2">
+                        <a href="{{route('file.upload')}}" class="btn btn-primary"
+                           style="padding-left: 2.5rem; padding-right: 2.5rem; background-color: #293E63">Upload New
+                            file
+                        </a>
+                    </div>
                 </div>
+                <div class="col-lg-7 mb-5 mb-lg-0 position-relative">
+                    <div id="radius-shape-1" class="position-absolute rounded-circle shadow-5-strong"></div>
+                    <div id="radius-shape-2" class="position-absolute shadow-5-strong"></div>
 
-                <div class="col-lg-8">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">name</th>
-                            <th scope="col">Type of file</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($files as $file)
-                            <tr>
-                                <td>{{$loop->iteration}}</td>
-                                <td>{{$file->name}}</td>
-                                <td>{{$file->extension}} File</td>
-                                <td>
-                                    <a href="{{ route('file.download', ['link' => $file->download_link]) }}"
-                                       class="btn btn-sm btn-clean btn-icon" title="Download File">
-                                        <i class="fas fa-download"></i>
-                                    </a>
-                                    <button class="btn btn-sm btn-clean btn-icon" title="Copy file path to share"
-                                            onclick="copyToClipboard('{{ route('file.download', ['link' => $file->download_link]) }}')">
-                                        <i class="fas fa-copy"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
+                    @if (!$files->isEmpty()) {
+                        <div class="card bg-glass">
+                            <div class="card-body px-12 py-12 px-md-12">
+                                <div class="row d-flex justify-content-center align-items-center h-100">
+                                    <div class="col-lg-12">
+                                        <h4> Uploaded Files</h4>
+                                        <table class="table" style="--bs-table-bg: FFFFFFE5;">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Title</th>
+                                                <th scope="col">Type of file</th>
+                                                <th scope="col">Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            @foreach($files as $file)
+                                                <tr>
+                                                    <td>{{$loop->iteration}}</td>
+                                                    <td>{{$file->title}}</td>
+                                                    <td>{{$file->extension}} File</td>
+                                                    <td>
+                                                        <a href="{{ route('file.download', ['link' => $file->download_link]) }}"
+                                                           class="btn btn-sm btn-clean btn-icon" title="Download File">
+                                                            <i class="fas fa-download"></i>
+                                                        </a>
+                                                        <button class="btn btn-sm btn-clean btn-icon"
+                                                                title="Copy file path to share"
+                                                                onclick="copyToClipboard('{{ route('file.download', ['link' => $file->download_link]) }}')">
+                                                            <i class="fas fa-copy"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    @else
+                        <img src="{{asset('images/file.svg')}}" width="400px">
+                    @endif
+
                 </div>
 
             </div>
         </div>
-    </section>
+
+</div>
+</section>
+<!-- Section: Design Block -->
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.all.min.js"></script>
 
 <script>

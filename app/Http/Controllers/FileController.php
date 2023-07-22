@@ -13,7 +13,7 @@ class FileController extends Controller
 
     public function index()
     {
-        $files = File::orderBy('name', 'DESC')->get();
+        $files = File::orderBy('created_at', 'DESC')->get();
         return view('index', compact('files'));
 
     }
@@ -28,6 +28,8 @@ class FileController extends Controller
 
         $validator = Validator::make($request->all(), [
             'file' => 'required|file',
+            'title' => 'required|string',
+            'message' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -37,12 +39,12 @@ class FileController extends Controller
 
         $file = $request->file('file');
         $extension = $file->getClientOriginalExtension();
-        $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+       // $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $path = $file->store('uploads');
 
         File::create([
-            'name' => $filename ,
             'extension' => $extension,
+            'title' => $request->title,
             'path' => $path,
             'download_link' => Str::random(16),
         ]);
