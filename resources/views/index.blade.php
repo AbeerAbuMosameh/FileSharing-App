@@ -90,19 +90,23 @@
                                             <tbody>
                                             @foreach($files as $file)
                                                 <tr>
-                                                    <td>{{$loop->iteration}}</td>
-                                                    <td>{{$file->title}}</td>
-                                                    <td>{{$file->extension}} File</td>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $file->title }}</td>
+                                                    <td>{{ $file->extension }} File</td>
                                                     <td>
-                                                        <a href="{{ route('file.download', ['link' => $file->download_link]) }}"
-                                                           class="btn btn-sm btn-clean btn-icon" title="Download File">
+                                                        <a href="{{ route('file.download.signed', ['link' => $file->download_link]) }}"
+                                                           class="btn btn-sm btn-clean btn-icon"
+                                                           title="Download File">
                                                             <i class="fas fa-download"></i>
                                                         </a>
                                                         <button class="btn btn-sm btn-clean btn-icon"
                                                                 title="Copy file path to share"
-                                                                onclick="copyToClipboard('{{ route('file.download', ['link' => $file->download_link]) }}')">
+                                                                onclick="copyToClipboard('{{ $downloadUrls[$file->id] }}')">
                                                             <i class="fas fa-copy"></i>
                                                         </button>
+                                                        <a onclick="sweet('{{$file->id}}',this)" class="btn btn-sm btn-clean btn-icon"
+                                                           title="Delete"><i class="nav-icon fa fa-trash"></i></a>
+
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -144,6 +148,47 @@
         });
     }
 </script>
+<script>
+    function sweet(id, reference) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#ff0303',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/file/delete/' + id, // Update the URL to match your file deletion route
+                    method: 'DELETE',
+                    data: {_token: '{{ csrf_token() }}'},
+                    success: function (response) {
+                        // Show the success message
+                        Swal.fire(
+                            'Deleted!',
+                            'The file has been deleted.',
+                            'success'
+                        ).then((result) => {
+                            // Reload the page to update the file list
+                            location.reload();
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        // Show the error message
+                        Swal.fire(
+                            'Error!',
+                            'There was an error deleting the file.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    }
+</script>
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

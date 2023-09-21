@@ -16,5 +16,5 @@ use App\Http\Controllers\FileController;
 Route::get('/', [FileController::class, 'index'])->name('home');
 Route::get('/upload-File', [FileController::class, 'upload'])->name('file.upload');
 Route::post('/store-File', [FileController::class, 'store'])->name('file.store');
-Route::get('/file/{link}', [FileController::class, 'download'])->name('file.download');
-Route::get('/file/{link}/copy', [FileController::class, 'copyLink'])->name('file.copyLink');
+Route::delete('file/delete/{file}', [FileController::class, 'delete'])->name('file.destroy');
+Route::get('/file/{link}/download', [FileController::class, 'download'])->name('file.download.signed');
